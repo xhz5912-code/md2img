@@ -431,6 +431,7 @@ input[type="range"]::-webkit-slider-thumb {
   <button class="menu-btn" id="btn-menu" title="设置">☰</button>
   <span class="brand">md2img</span>
   <div class="top-actions">
+    <button id="btn-install" style="display:none;height:38px;min-width:60px;padding:0 12px;border-radius:8px;border:1px solid var(--accent);background:var(--surface);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;align-items:center;gap:4px;">📲 安装</button>
     <button id="btn-copy" title="复制图片">📋 复制</button>
     <button id="btn-download" class="primary" title="下载图片">📷 下载</button>
   </div>
@@ -996,6 +997,26 @@ if (!isMobile()) {
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.match(/^192\.168\./) || location.hostname.match(/^10\./) || location.hostname.match(/^172\.(1[6-9]|2\d|3[01])\./))) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
+
+// ═══════ PWA Install Prompt ═══════
+let installPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  installPrompt = e;
+  // 显示安装按钮
+  const btn = document.getElementById('btn-install');
+  if (btn) btn.style.display = 'flex';
+});
+
+document.getElementById('btn-install').addEventListener('click', async () => {
+  if (!installPrompt) return;
+  installPrompt.prompt();
+  const result = await installPrompt.userChoice;
+  if (result.outcome === 'accepted') {
+    document.getElementById('btn-install').style.display = 'none';
+  }
+  installPrompt = null;
+});
 </script>
 </body>
 </html>
