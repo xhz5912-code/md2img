@@ -601,6 +601,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 <!-- ═══════════ bottom bar (mobile) ═══════════ -->
 <div class="bottom-bar">
+  <button id="btn-install-mobile" style="display:none;border-color:var(--accent);color:var(--accent);font-weight:600;">📲 安装 App</button>
   <button id="btn-copy-mobile">📋 复制</button>
   <button id="btn-download-mobile" class="primary">📷 下载图片</button>
 </div>
@@ -1003,20 +1004,33 @@ let installPrompt = null;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   installPrompt = e;
-  // 显示安装按钮
-  const btn = document.getElementById('btn-install');
-  if (btn) btn.style.display = 'flex';
+  // 桌面和移动端都显示安装按钮
+  const btns = ['btn-install', 'btn-install-mobile'];
+  btns.forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.style.display = 'flex';
+  });
 });
 
-document.getElementById('btn-install').addEventListener('click', async () => {
-  if (!installPrompt) return;
-  installPrompt.prompt();
-  const result = await installPrompt.userChoice;
-  if (result.outcome === 'accepted') {
-    document.getElementById('btn-install').style.display = 'none';
+function triggerInstall() {
+  if (!installPrompt) {
+    showToast('请通过浏览器菜单 → 安装应用 / 添加到主屏幕');
+    return;
   }
-  installPrompt = null;
-});
+  installPrompt.prompt();
+  installPrompt.userChoice.then(result => {
+    if (result.outcome === 'accepted') {
+      ['btn-install', 'btn-install-mobile'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.style.display = 'none';
+      });
+    }
+    installPrompt = null;
+  });
+}
+
+document.getElementById('btn-install').addEventListener('click', triggerInstall);
+document.getElementById('btn-install-mobile').addEventListener('click', triggerInstall);
 </script>
 </body>
 </html>
