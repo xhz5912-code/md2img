@@ -431,7 +431,6 @@ input[type="range"]::-webkit-slider-thumb {
   <button class="menu-btn" id="btn-menu" title="设置">☰</button>
   <span class="brand">md2img</span>
   <div class="top-actions">
-    <button id="btn-install" style="display:none;height:38px;min-width:60px;padding:0 12px;border-radius:8px;border:1px solid var(--accent);background:var(--surface);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;align-items:center;gap:4px;">📲 安装</button>
     <button id="btn-copy" title="复制图片">📋 复制</button>
     <button id="btn-download" class="primary" title="下载图片">📷 下载</button>
   </div>
@@ -601,7 +600,6 @@ input[type="range"]::-webkit-slider-thumb {
 
 <!-- ═══════════ bottom bar (mobile) ═══════════ -->
 <div class="bottom-bar">
-  <button id="btn-install-mobile" style="display:none;border-color:var(--accent);color:var(--accent);font-weight:600;">📲 安装 App</button>
   <button id="btn-copy-mobile">📋 复制</button>
   <button id="btn-download-mobile" class="primary">📷 下载图片</button>
 </div>
@@ -999,38 +997,7 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
-// ═══════ PWA Install Prompt ═══════
-let installPrompt = null;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  installPrompt = e;
-  // 桌面和移动端都显示安装按钮
-  const btns = ['btn-install', 'btn-install-mobile'];
-  btns.forEach(id => {
-    const btn = document.getElementById(id);
-    if (btn) btn.style.display = 'flex';
-  });
-});
 
-function triggerInstall() {
-  if (!installPrompt) {
-    showToast('请通过浏览器菜单 → 安装应用 / 添加到主屏幕');
-    return;
-  }
-  installPrompt.prompt();
-  installPrompt.userChoice.then(result => {
-    if (result.outcome === 'accepted') {
-      ['btn-install', 'btn-install-mobile'].forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) btn.style.display = 'none';
-      });
-    }
-    installPrompt = null;
-  });
-}
-
-document.getElementById('btn-install').addEventListener('click', triggerInstall);
-document.getElementById('btn-install-mobile').addEventListener('click', triggerInstall);
 </script>
 </body>
 </html>
