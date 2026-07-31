@@ -110,17 +110,18 @@ function syncChipsFromState() {
 /* ─────────── 导出动作 ─────────── */
 async function doExport() {
   if (!editor.value.trim()) { Toast.show('⚠️ 内容为空，先输入 Markdown'); return null; }
-  const canvas = await Exporter.capture(state.scale);
-  const dataUrl = Exporter.canvasToDataUrl(canvas, state.format, state.quality / 100);
-  return { dataUrl, bytes: Exporter.estimateBytes(dataUrl) };
+  const { canvas, usedScale } = await Exporter.captureSmart(state.scale);
+  const blob = await Exporter.canvasToBlob(canvas, state.format, state.quality / 100);
+  return { blob, bytes: blob.size, usedScale };
 }
 
 function bindDownload(btnId, label) {
   $(btnId).addEventListener('click', () => withBusy($(btnId), '⏳ 生成中…', async () => {
     const r = await doExport();
     if (!r) return;
-    Exporter.download(r.dataUrl, state.format);
-    Toast.show(`✅ 已下载 (${state.width}×${state.scale} 倍率 · ${Exporter.humanSize(r.bytes)})`);
+    Exporter.downloadBlob(r.blob, state.format);
+    const degraded = r.usedScale !== state.scale ? `（已自动降级 ${state.scale}x→${r.usedScale}x）` : '';
+    Toast.show(`✅ 已下载 (${r.usedScale}x 倍率 · ${Exporter.humanSize(r.bytes)})${degraded}`);
   }));
 }
 
@@ -128,11 +129,18 @@ async function copyImage() {
   const r = await doExport();
   if (!r) return;
   try {
-    await Exporter.copy(r.dataUrl);
+    await Exporter.copyBlob(r.blob);
     Toast.show(`✅ 已复制到剪贴板 (${Exporter.humanSize(r.bytes)})`);
   } catch (e) {
+    // 降级：blob → dataURL 文本复制
     try {
-      await navigator.clipboard.writeText(r.dataUrl);
+      const dataUrl = await new Promise((res, rej) => {
+        const fr = new FileReader();
+        fr.onload = () => res(fr.result);
+        fr.onerror = rej;
+        fr.readAsDataURL(r.blob);
+      });
+      await navigator.clipboard.writeText(dataUrl);
       Toast.show('⚠️ 已复制 data URL（部分应用不支持图片粘贴）');
     } catch (e2) {
       Toast.show('❌ 复制失败，请尝试下载');
