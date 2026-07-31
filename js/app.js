@@ -8,8 +8,8 @@
 const LS_KEY = 'md2img_settings_v2';
 
 const FONT_MAP = {
-  hei:   '"PingFang SC", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif',
-  serif: '"Noto Serif SC", "Source Han Serif SC", Georgia, "Times New Roman", serif',
+  hei:   '"Geist", "PingFang SC", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif',
+  serif: '"Fraunces", "Noto Serif SC", "Source Han Serif SC", Georgia, "Times New Roman", serif',
   mono:  '"JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, "Courier New", monospace',
   round: '"ZCOOL XiaoWei", "LXGW WenKai", KaiTi, "Comic Sans MS", sans-serif',
 };
