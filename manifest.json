@@ -1,8 +1,8 @@
 {
   "name": "md2img — Markdown 转图片",
   "short_name": "md2img",
-  "description": "将 Markdown 文本导出为精美图片，支持多主题、多字体、多尺寸",
-  "start_url": "./md2img.html",
+  "description": "将 Markdown 文本导出为精美图片，支持多主题、多字体、多尺寸，离线可用",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
