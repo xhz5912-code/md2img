@@ -44,9 +44,9 @@ const Exporter = (() => {
         logging: false,
         onclone: (doc) => {
           const UI_HEX = {
-            '--color-paper':        '#fbf8f3',
-            '--color-paper-2':      '#f4f0e9',
-            '--color-paper-3':      '#ede8df',
+            '--color-paper':        '#f6f0e5',
+            '--color-paper-2':      '#efe8da',
+            '--color-paper-3':      '#e9e0d0',
             '--color-rule':         '#e2ddd2',
             '--color-rule-strong':  '#cfc9bc',
             '--color-neutral':      '#8a8174',
@@ -68,8 +68,6 @@ const Exporter = (() => {
           for (const el of targets) {
             for (const [k, v] of Object.entries(UI_HEX)) el.style.setProperty(k, v);
           }
-          const overlay = doc.querySelector('.drawer-overlay');
-          if (overlay) overlay.style.background = 'rgba(30,26,22,0.45)';
         },
       });
     } finally {

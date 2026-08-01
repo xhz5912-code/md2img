@@ -1,0 +1,212 @@
+/* tokens.css — md2img design tokens
+ * Hallmark · custom (tuned) · vibe: "sunlit cream, warm amber, Claude-calibre restraint"
+ * paper: oklch(97% 0.012 80) · accent: oklch(62% 0.15 32) · display: Newsreader · body: Geist
+ * 预览卡（--pv-*）是 html2canvas 导出本体，必须用兼容色值（hex）；UI 层用 OKLCH。
+ * 本文件只定义 token，不定义任何规则。
+ */
+
+:root {
+  /* ── color · UI（OKLCH，html2canvas 不捕获 UI 层） ──
+   * light：奶油画布（chroma 0.02，可感知暖调；预览卡 L0 纸色同族） */
+  --color-paper:       oklch(96.8% 0.02  78);
+  --color-paper-2:     oklch(94%   0.022 78);
+  --color-paper-3:     oklch(91.5% 0.024 78);
+  --color-rule:        oklch(84%   0.02  78);
+  --color-rule-2:      oklch(88%   0.018 78);
+  --color-neutral:     oklch(55%   0.011 70);
+  --color-muted:       oklch(42%   0.012 65);
+  --color-ink:         oklch(21%   0.014 55);
+  --color-ink-2:       oklch(33%   0.013 60);
+  --color-accent:      oklch(62%   0.15  32);
+  --color-accent-hover:oklch(58%   0.15  32);
+  --color-accent-soft: oklch(94%   0.03  60);
+  --color-accent-ink:  oklch(14%   0.02  50);
+  --color-accent-deep: oklch(42%   0.13  32);
+  --color-focus:       oklch(60%   0.20  32);
+  --color-danger:      oklch(55%   0.17  25);
+  --color-success:     oklch(52%   0.11 150);
+
+  /* ── color · 预览卡（导出本体，hex 兼容 html2canvas） ──
+   * light 主题：纯净雅致 —— 近白微暖纸、墨色文字、亮 terracotta 链接 */
+  --pv-bg:           #fbfaf7;
+  --pv-text:         #262220;
+  --pv-heading:      #191612;
+  --pv-link:         #bc4f1d;
+  --pv-code-bg:      #f1eee8;
+  --pv-code-text:    #a3441d;
+  --pv-pre-bg:       #232019;
+  --pv-pre-text:     #e9e1d1;
+  --pv-quote-bg:     #f4f1ea;
+  --pv-quote-border: #bc4f1d;
+  --pv-th-bg:        #f3f0ea;
+  --pv-tr-even:      #f8f6f2;
+  --pv-hr:           #e7e3da;
+  --pv-h-border:     #e5e1d7;
+  --pv-block-border: #e4e0d6;
+
+  /* ── font ── */
+  --font-display: "Newsreader", "Noto Serif SC", "Source Han Serif SC", Georgia, serif;
+  --font-body:    "Geist", "PingFang SC", "Noto Sans SC", -apple-system, BlinkMacSystemFont,
+                  "Microsoft YaHei", sans-serif;
+  --font-outlier: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+
+  /* ── type scale（1.25 major third，基准 16px） ── */
+  --text-xs:   0.64rem;
+  --text-sm:   0.8rem;
+  --text-base: 1rem;
+  --text-md:   1.25rem;
+  --text-lg:   1.5625rem;
+  --text-xl:   1.9531rem;
+  --text-2xl:  2.4414rem;
+  --text-3xl:  3.0518rem;
+
+  /* ── space（4pt 基座，按角色命名） ── */
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 9rem;
+
+  /* ── radius ── */
+  --radius-xs: 2px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 999px;
+
+  /* ── motion ── */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:     cubic-bezier(0.7,  0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long:  420ms;
+
+  /* ── shadow（whisper 单层） ── */
+  --shadow-whisper: 0 1px 2px oklch(20% 0.01 55 / 0.05);
+
+  /* ── z（六层命名） ── */
+  --z-base:     1;
+  --z-raised:   10;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-modal:    400;
+  --z-toast:    500;
+  --z-tooltip:  600;
+}
+
+/* ── dark：暖深棕（非纯黑），accent 提亮、chroma 降低 ── */
+body[data-theme="dark"] {
+  --color-paper:       oklch(16%   0.012 80);
+  --color-paper-2:     oklch(19%   0.013 80);
+  --color-paper-3:     oklch(22%   0.013 80);
+  --color-rule:        oklch(29%   0.012 80);
+  --color-rule-2:      oklch(26%   0.012 80);
+  --color-neutral:     oklch(58%   0.010 80);
+  --color-muted:       oklch(70%   0.009 80);
+  --color-ink:         oklch(93%   0.008 80);
+  --color-ink-2:       oklch(82%   0.009 80);
+  --color-accent:      oklch(72%   0.13  32);
+  --color-accent-hover:oklch(76%   0.12  32);
+  --color-accent-soft: oklch(26%   0.04  40);
+  --color-accent-ink:  oklch(16%   0.02  40);
+  --color-accent-deep: oklch(66%   0.13  32);
+  --color-focus:       oklch(74%   0.17  32);
+  --color-danger:      oklch(68%   0.15  30);
+  --color-success:     oklch(70%   0.12 150);
+
+  --pv-bg:           #211e1a;
+  --pv-text:         #e6e0d6;
+  --pv-heading:      #f0ebe2;
+  --pv-link:         #d98a4a;
+  --pv-code-bg:      #2b2723;
+  --pv-code-text:    #e08a6a;
+  --pv-pre-bg:       #14120f;
+  --pv-pre-text:     #e0d4c0;
+  --pv-quote-bg:     #262220;
+  --pv-quote-border: #c96a2b;
+  --pv-th-bg:        #262220;
+  --pv-tr-even:      #24201d;
+  --pv-hr:           #3a352e;
+  --pv-h-border:     #3a352e;
+  --pv-block-border: #3a352e;
+
+  --shadow-whisper: 0 1px 2px oklch(0% 0 0 / 0.4);
+}
+
+/* ── warm：杏色画布（预览卡 W3 焦糖奶 #fbefdd 同族的更浅一档） ── */
+body[data-theme="warm"] {
+  --color-paper:       oklch(96.8% 0.028 68);
+  --color-paper-2:     oklch(94%   0.03  68);
+  --color-paper-3:     oklch(91%   0.032 68);
+  --color-rule:        oklch(83%   0.026 68);
+  --color-rule-2:      oklch(87%   0.024 68);
+  --color-neutral:     oklch(54%   0.02  65);
+  --color-muted:       oklch(40%   0.02  60);
+  --color-ink:         oklch(21%   0.02  55);
+  --color-ink-2:       oklch(33%   0.02  60);
+  --color-accent:      oklch(62%   0.15  32);
+  --color-accent-hover:oklch(58%   0.15  32);
+  --color-accent-soft: oklch(93%   0.05  75);
+  --color-accent-ink:  oklch(14%   0.02  50);
+  --color-accent-deep: oklch(42%   0.13  32);
+  --color-focus:       oklch(60%   0.20  32);
+
+  /* warm：预览卡 W3 焦糖奶 */
+  --pv-bg:           #fbefdd;
+  --pv-text:         #392d1e;
+  --pv-heading:      #282015;
+  --pv-link:         #b0601e;
+  --pv-code-bg:      #f5e8d2;
+  --pv-code-text:    #93501a;
+  --pv-pre-bg:       #2f2519;
+  --pv-pre-text:     #eedcbc;
+  --pv-quote-bg:     #f6ebd7;
+  --pv-quote-border: #c98530;
+  --pv-th-bg:        #f4e7d0;
+  --pv-tr-even:      #f8efdd;
+  --pv-hr:           #ecdcc0;
+  --pv-h-border:     #eeddbf;
+  --pv-block-border: #ecdcc0;
+}
+
+/* ── green：浅草画布（预览卡 G2 浅草 #eef4e7 同族的更浅一档） ── */
+body[data-theme="green"] {
+  --color-paper:       oklch(96.5% 0.028 140);
+  --color-paper-2:     oklch(93.5% 0.03  140);
+  --color-paper-3:     oklch(91%   0.032 140);
+  --color-rule:        oklch(82%   0.026 140);
+  --color-rule-2:      oklch(86%   0.024 140);
+  --color-neutral:     oklch(52%   0.015 150);
+  --color-muted:       oklch(40%   0.015 150);
+  --color-ink:         oklch(22%   0.018 150);
+  --color-ink-2:       oklch(34%   0.016 150);
+  --color-accent:      oklch(46%   0.11  150);
+  --color-accent-hover:oklch(42%   0.11  150);
+  --color-accent-soft: oklch(93%   0.03  150);
+  --color-accent-ink:  oklch(98%   0.015 150);
+  --color-accent-deep: oklch(36%   0.12  150);
+  --color-focus:       oklch(50%   0.14  150);
+
+  /* green：预览卡 G2 浅草 */
+  --pv-bg:           #eef4e7;
+  --pv-text:         #2a3526;
+  --pv-heading:      #1d2718;
+  --pv-link:         #4a7c3f;
+  --pv-code-bg:      #e4ecdb;
+  --pv-code-text:    #3d6a35;
+  --pv-pre-bg:       #212a20;
+  --pv-pre-text:     #dce6d8;
+  --pv-quote-bg:     #e7efe0;
+  --pv-quote-border: #5b8a4a;
+  --pv-th-bg:        #e4ecdb;
+  --pv-tr-even:      #eaf1e3;
+  --pv-hr:           #dbe5d2;
+  --pv-h-border:     #d9e3d0;
+  --pv-block-border: #dbe5d2;
+}

@@ -18,7 +18,7 @@
 - 排版：输出宽度（600–1200px）、正文字号（14–20px）、内边距（20–64px）
 - 设置与正文草稿自动保存（localStorage），刷新不丢失
 - 快捷键：`Ctrl+Enter` 下载、`Ctrl+Shift+C` 复制
-- 移动端抽屉式设置面板
+- 模块化布局：预览卡为视觉主角，设置平铺为卡片（移动端自动单列重排）
 - PWA：可安装、离线可用
 
 ## 🛠 技术架构
@@ -27,8 +27,9 @@
 
 ```
 md2img/
-├── index.html        # 页面骨架
-├── css/styles.css    # 样式 + CSS 变量主题体系
+├── index.html        # 页面骨架（Bento 模块化布局）
+├── tokens.css        # 设计 token（色彩/字体/间距/动效，OKLCH）
+├── css/styles.css    # 页面样式 + 主题变量覆盖
 ├── js/
 │   ├── utils.js      # toast、按钮 busy 状态等工具
 │   ├── renderer.js   # marked 解析 + DOMPurify 消毒

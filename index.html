@@ -1,165 +1,161 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>md2img — Markdown 转图片</title>
-<meta name="description" content="将 Markdown 文本导出为精美图片，支持多主题、多字体、多尺寸，离线可用。">
+<meta name="description" content="把 Markdown 变成一张好看的图片。粘贴、调整、下载，全部在本机完成，离线可用。">
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" id="meta-theme-color" content="#f8f9fa">
+<meta name="theme-color" id="meta-theme-color" content="#f8f6f1">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="md2img">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='36' fill='%234f46e5'/><text x='96' y='118' text-anchor='middle' font-size='56' fill='white' font-family='sans-serif' font-weight='bold'>M↓</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='40' fill='%23fbf9f4'/><rect x='44' y='44' width='104' height='104' rx='18' fill='none' stroke='%23c0551e' stroke-width='10'/><path d='M74 96h44M96 74v44' stroke='%23c0551e' stroke-width='10' stroke-linecap='round'/></svg>">
 <!-- CDN libraries -->
 <script src="https://cdn.jsdelivr.net/npm/marked@11.2.0/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<!-- Fonts: Fraunces (display) · Geist (body) · JetBrains Mono (outlier) -->
+<!-- Fonts: Newsreader (display) · Geist (body) · JetBrains Mono (outlier) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body data-theme="light">
 
-<!-- ═══════════ top bar ═══════════ -->
-<header class="topbar">
-  <button id="btn-menu" class="menu-btn" aria-label="打开设置菜单">☰</button>
-  <div class="brand">md2img <span class="brand-sub">Markdown → 图片</span></div>
-  <div class="top-actions">
-    <button id="btn-copy-mobile" class="icon-btn mobile-only" title="复制图片到剪贴板">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+<!-- N9 · edge-aligned minimal：wordmark 左，单一动作右，中间留白 -->
+<header class="nav-edge">
+  <div class="wordmark">
+    md2img
+    <span class="wordmark-sub">Markdown → 图片</span>
+  </div>
+  <div class="nav-actions">
+    <button id="btn-copy" class="btn btn-ghost" type="button" aria-label="复制图片到剪贴板">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <span class="btn-label">复制图片</span>
     </button>
-    <button id="btn-download-mobile" class="primary mobile-only" title="下载图片 (Ctrl+Enter)">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    </button>
-    <button id="btn-copy" class="icon-btn desktop-only" title="复制图片到剪贴板 (Ctrl+Shift+C)">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-    </button>
-    <button id="btn-download" class="primary desktop-only" title="下载图片 (Ctrl+Enter)">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      下载
+    <button id="btn-download" class="btn btn-primary" type="button">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span class="btn-label">下载图片</span>
     </button>
   </div>
 </header>
 
-<!-- ═══════════ layout ═══════════ -->
-<div class="layout">
-  <!-- sidebar -->
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-tabs" role="tablist">
-      <button class="active" data-tab="tab-appearance">外观</button>
-      <button data-tab="tab-font">字体</button>
-      <button data-tab="tab-layout">排版</button>
-      <button data-tab="tab-export">导出</button>
+<!-- Bento：预览卡是最大模块（7 列 × 2 行），编辑器 5×2，设置平铺一行四卡 -->
+<main class="bento">
+  <section class="cell cell-editor" style="--i:0">
+    <header class="cell-head">
+      <h2 class="cell-title">Markdown</h2>
+      <span class="cell-meta" id="editor-stats">0 字符</span>
+    </header>
+    <textarea id="editor" class="editor" spellcheck="false" aria-label="Markdown 输入"
+      placeholder="粘贴或输入 Markdown，右侧实时预览。Ctrl+Enter 下载，Ctrl+Shift+C 复制。"></textarea>
+    <footer class="cell-actions">
+      <button id="btn-clear" class="btn btn-quiet" type="button">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <span class="btn-label">清空</span>
+      </button>
+      <button id="btn-sample" class="btn btn-quiet" type="button">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span class="btn-label">加载示例</span>
+      </button>
+      <button id="btn-reset" class="btn btn-quiet" type="button">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        <span class="btn-label">重置设置</span>
+      </button>
+    </footer>
+  </section>
+
+  <section class="cell cell-preview" style="--i:1">
+    <header class="cell-head">
+      <h2 class="cell-title">预览</h2>
+      <span class="cell-meta" id="preview-stats">—</span>
+    </header>
+    <div class="preview-wrap" id="preview-wrap">
+      <article id="preview" class="preview-card" aria-label="预览卡片"></article>
     </div>
-    <div class="sidebar-body">
-      <button class="drawer-close mobile-only" aria-label="关闭菜单">✕</button>
+  </section>
 
-      <!-- 外观 -->
-      <section class="tab-panel active" id="tab-appearance">
-        <h4 class="panel-title">背景主题</h4>
-        <div class="chip-grid" id="theme-chips">
-          <button class="chip theme-chip active" data-theme="light">☀️ 亮色</button>
-          <button class="chip theme-chip" data-theme="dark">🌙 暗色</button>
-          <button class="chip theme-chip" data-theme="warm">🕯️ 暖色</button>
-          <button class="chip theme-chip" data-theme="green">🌿 护眼绿</button>
-        </div>
-        <p class="panel-hint">预览卡片与界面同步换肤</p>
-      </section>
-
-      <!-- 字体 -->
-      <section class="tab-panel" id="tab-font">
-        <h4 class="panel-title">预览字体</h4>
-        <div class="chip-grid" id="font-chips">
-          <button class="chip font-chip active" data-font="hei">黑体 · 清晰现代</button>
-          <button class="chip font-chip" data-font="serif">衬线 · 古典优雅</button>
-          <button class="chip font-chip" data-font="mono">等宽 · 极客代码</button>
-          <button class="chip font-chip" data-font="round">圆体 · 温润可爱</button>
-        </div>
-        <p class="panel-hint">字体随用户设备自动回退</p>
-      </section>
-
-      <!-- 排版 -->
-      <section class="tab-panel" id="tab-layout">
-        <h4 class="panel-title">输出宽度</h4>
-        <div class="chip-grid" id="width-chips">
-          <button class="chip layout-chip" data-width="600">600px · 手机分享</button>
-          <button class="chip layout-chip active" data-width="780">780px · 图文混排</button>
-          <button class="chip layout-chip" data-width="960">960px · 宽屏阅读</button>
-          <button class="chip layout-chip" data-width="1200">1200px · 长图导出</button>
-        </div>
-        <h4 class="panel-title">正文字号</h4>
-        <div class="chip-grid" id="fontsize-chips">
-          <button class="chip layout-chip" data-size="14">14px · 紧凑</button>
-          <button class="chip layout-chip active" data-size="16">16px · 标准</button>
-          <button class="chip layout-chip" data-size="18">18px · 易读</button>
-          <button class="chip layout-chip" data-size="20">20px · 大字</button>
-        </div>
-        <h4 class="panel-title">内边距</h4>
-        <div class="chip-grid" id="padding-chips">
-          <button class="chip layout-chip" data-padding="20">20px · 紧凑</button>
-          <button class="chip layout-chip active" data-padding="32">32px · 标准</button>
-          <button class="chip layout-chip" data-padding="48">48px · 宽松</button>
-          <button class="chip layout-chip" data-padding="64">64px · 海报</button>
-        </div>
-      </section>
-
-      <!-- 导出 -->
-      <section class="tab-panel" id="tab-export">
-        <h4 class="panel-title">图片格式</h4>
-        <div class="chip-grid" id="export-format">
-          <button class="chip export-format active" data-format="png">PNG · 无损</button>
-          <button class="chip export-format" data-format="jpeg">JPEG · 体积小</button>
-        </div>
-        <h4 class="panel-title">清晰度</h4>
-        <div class="chip-grid" id="export-scale">
-          <button class="chip export-scale" data-scale="1">1x · 标准</button>
-          <button class="chip export-scale active" data-scale="2">2x · 高清</button>
-          <button class="chip export-scale" data-scale="3">3x · 超清</button>
-        </div>
-        <h4 class="panel-title" id="quality-label">JPEG 质量</h4>
-        <div class="quality-row">
-          <input type="range" id="slider-quality" min="50" max="100" step="1" value="90" aria-label="JPEG 质量">
-          <span id="val-quality">90%</span>
-        </div>
-      </section>
-
-      <div class="sidebar-footer">
-        <button id="btn-clear" class="ghost-btn">🗑️ 清空内容</button>
-        <button id="btn-sample" class="ghost-btn">✨ 加载示例</button>
-        <button id="btn-reset" class="ghost-btn">♻️ 清除缓存</button>
-      </div>
+  <section class="cell cell-appear" style="--i:2">
+    <header class="cell-head">
+      <h2 class="cell-title">外观</h2>
+    </header>
+    <div class="chip-grid" id="theme-chips" role="group" aria-label="背景主题">
+      <button class="chip theme-chip" data-theme="light" aria-pressed="true">亮色</button>
+      <button class="chip theme-chip" data-theme="dark" aria-pressed="false">暗色</button>
+      <button class="chip theme-chip" data-theme="warm" aria-pressed="false">暖色</button>
+      <button class="chip theme-chip" data-theme="green" aria-pressed="false">护眼</button>
     </div>
-  </aside>
-  <div class="drawer-overlay" id="drawer-overlay"></div>
+    <p class="cell-hint">预览卡片与界面同步换肤</p>
+  </section>
 
-  <!-- workbench -->
-  <main class="workbench">
-    <section class="pane editor-pane">
-      <div class="pane-header">
-        <span class="pane-title">Markdown</span>
-        <span class="pane-stats" id="editor-stats">0 字符</span>
-      </div>
-      <textarea id="editor" class="editor" spellcheck="false"
-        placeholder="# 在这里输入 Markdown&#10;&#10;右侧实时预览，Ctrl+Enter 一键导出图片"></textarea>
-    </section>
-    <section class="pane preview-pane">
-      <div class="pane-header">
-        <span class="pane-title">预览</span>
-        <span class="pane-stats" id="preview-stats">—</span>
-      </div>
-      <div class="preview-wrap" id="preview-wrap">
-        <article id="preview" class="preview-card" aria-label="预览卡片"></article>
-      </div>
-    </section>
-  </main>
-</div>
+  <section class="cell cell-font" style="--i:3">
+    <header class="cell-head">
+      <h2 class="cell-title">字体</h2>
+    </header>
+    <div class="chip-grid" id="font-chips" role="group" aria-label="预览字体">
+      <button class="chip font-chip" data-font="hei" aria-pressed="true">黑体</button>
+      <button class="chip font-chip" data-font="serif" aria-pressed="false">衬线</button>
+      <button class="chip font-chip" data-font="mono" aria-pressed="false">等宽</button>
+      <button class="chip font-chip" data-font="round" aria-pressed="false">圆体</button>
+    </div>
+    <p class="cell-hint">按设备字体自动回退</p>
+  </section>
 
-<!-- toast -->
+  <section class="cell cell-layout" style="--i:4">
+    <header class="cell-head">
+      <h2 class="cell-title">排版</h2>
+    </header>
+    <div class="chip-grid" id="width-chips" role="group" aria-label="输出宽度">
+      <button class="chip layout-chip" data-width="600" aria-pressed="false">600 · 手机</button>
+      <button class="chip layout-chip" data-width="780" aria-pressed="true">780 · 图文</button>
+      <button class="chip layout-chip" data-width="960" aria-pressed="false">960 · 宽屏</button>
+      <button class="chip layout-chip" data-width="1200" aria-pressed="false">1200 · 长图</button>
+    </div>
+    <div class="chip-grid" id="fontsize-chips" role="group" aria-label="正文字号">
+      <button class="chip layout-chip" data-size="14" aria-pressed="false">14px</button>
+      <button class="chip layout-chip" data-size="16" aria-pressed="true">16px</button>
+      <button class="chip layout-chip" data-size="18" aria-pressed="false">18px</button>
+      <button class="chip layout-chip" data-size="20" aria-pressed="false">20px</button>
+    </div>
+    <div class="chip-grid" id="padding-chips" role="group" aria-label="内边距">
+      <button class="chip layout-chip" data-padding="20" aria-pressed="false">20 · 紧凑</button>
+      <button class="chip layout-chip" data-padding="32" aria-pressed="true">32 · 标准</button>
+      <button class="chip layout-chip" data-padding="48" aria-pressed="false">48 · 宽松</button>
+      <button class="chip layout-chip" data-padding="64" aria-pressed="false">64 · 海报</button>
+    </div>
+  </section>
+
+  <section class="cell cell-export" style="--i:5">
+    <header class="cell-head">
+      <h2 class="cell-title">导出</h2>
+    </header>
+    <div class="chip-grid" id="export-format" role="group" aria-label="图片格式">
+      <button class="chip export-format" data-format="png" aria-pressed="true">PNG</button>
+      <button class="chip export-format" data-format="jpeg" aria-pressed="false">JPEG</button>
+    </div>
+    <div class="chip-grid chip-grid-3" id="export-scale" role="group" aria-label="清晰度">
+      <button class="chip export-scale" data-scale="1" aria-pressed="false">1x</button>
+      <button class="chip export-scale" data-scale="2" aria-pressed="true">2x</button>
+      <button class="chip export-scale" data-scale="3" aria-pressed="false">3x</button>
+    </div>
+    <div class="quality-row" id="quality-row" hidden>
+      <label class="quality-label" for="slider-quality">JPEG 质量</label>
+      <input type="range" id="slider-quality" min="50" max="100" step="1" value="90">
+      <span class="quality-val" id="val-quality">90%</span>
+    </div>
+  </section>
+</main>
+
+<!-- Ft2 · inline single line -->
+<footer class="foot-line">
+  <p>Markdown 转图片 · 内容仅在本机处理，不会上传 · 可离线使用</p>
+</footer>
+
+<!-- toast：仅用于失败与不可见反馈，成功走按钮自身状态 -->
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script src="js/utils.js"></script>

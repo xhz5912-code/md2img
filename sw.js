@@ -4,12 +4,13 @@
    ═══════════════════════════════════════════════════════════ */
 'use strict';
 
-const CACHE = 'md2img-v4';
+const CACHE = 'md2img-v5';
 
 /* 注意：路径必须与仓库实际文件一一对应（此前的版本引用了不存在的
    md2img.html，导致 install 预缓存失败）。 */
 const ASSETS = [
   './index.html',
+  './tokens.css',
   './css/styles.css',
   './js/utils.js',
   './js/renderer.js',
